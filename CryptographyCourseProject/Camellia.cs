@@ -11,12 +11,12 @@ namespace CryptographyCourseProject
         public readonly ulong MASK32 = 0xffffffff;
         public readonly ulong MASK64 = 0xffffffffffffffff;
 
-        public readonly ulong c1 = 0xA09E667F3BCC908B;
-        public readonly ulong c2 = 0xB67AE8584CAA73B2;
-        public readonly ulong c3 = 0xC6EF372FE94F82BE;
-        public readonly ulong c4 = 0x54FF53A5F1D36F1C;
-        public readonly ulong c5 = 0x10E527FADE682D1D;
-        public readonly ulong c6 = 0xB05688C2B3E6C1FD;
+        public readonly ulong C1 = 0xA09E667F3BCC908B;
+        public readonly ulong C2 = 0xB67AE8584CAA73B2;
+        public readonly ulong C3 = 0xC6EF372FE94F82BE;
+        public readonly ulong C4 = 0x54FF53A5F1D36F1C;
+        public readonly ulong C5 = 0x10E527FADE682D1D;
+        public readonly ulong C6 = 0xB05688C2B3E6C1FD;
 
         private ulong[] SBOX1 = {
 
@@ -100,6 +100,35 @@ namespace CryptographyCourseProject
             return result;
         }
 
+        public void GenerateKaKb(ulong[] key, out ulong[] KA, out ulong[] KB)
+        {
+            KA = new ulong[2];
+            KB = new ulong[2];
+            ulong[] KL = new ulong[2];
+            ulong[] KR = new ulong[2];
+
+            KL[0] = key[0];
+            KL[1] = key[1];
+            KR[0] = key[2];
+            KR[1] = key[3];
+
+            ulong D1 = (KL[0] ^ KR[0]);
+            ulong D2 = (KL[1] ^ KR[1]);
+            D2 = D2 ^ F(D1, C1);
+            D1 = D1 ^ F(D2, C2);
+            D1 = D1 ^ (KL[0]);
+            D2 = D2 ^ (KL[1]);
+            D2 = D2 ^ F(D1, C3);
+            D1 = D1 ^ F(D2, C4);
+            KA[0] = D1;
+            KA[1] = D2;
+            D1 = (KA[0] ^ KR[0]);
+            D2 = (KA[1] ^ KR[1]);
+            D2 = D2 ^ F(D1, C5);
+            D1 = D1 ^ F(D2, C6);
+            KB[0] = D1;
+            KB[1] = D2;
+        }
         private ulong F(ulong F_IN, ulong KE)
         {
            ulong x = F_IN ^ KE;
