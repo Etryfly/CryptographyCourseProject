@@ -1,3 +1,4 @@
+using System.Text;
 using Xunit;
 
 namespace CamelliaTests
@@ -7,52 +8,20 @@ namespace CamelliaTests
         [Fact]
         public void EncryptTest()
         {
-            ulong[] key = new ulong[]
-          {
-                0x0123456789abcdef, 0xfedcba9876543210
-          };
+            byte[] key = ASCIIEncoding.ASCII.GetBytes("01234567890123456");
             CryptographyCourseProject.Camellia camellia = new CryptographyCourseProject.Camellia(key);
 
 
-            ulong[] message = new ulong[]
-            {
-                 0x0123456789abcdef, 0xfedcba9876543210
-            };
+            byte[] message = ASCIIEncoding.ASCII.GetBytes("jghfuerygiop1234");
 
-            ulong[] expected = new ulong[]
-            {
-                0x6767313854966973,0x0857065648eabe43
-            };
+           
 
-
-            ulong[] actual = camellia.Encrypt(message, key);
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void EncryptDecryptTest()
-        {
-
-            ulong[] key = new ulong[]
-            {
-                0x0123456789abcdef, 0xfedcba9876543210
-            };
-
-            CryptographyCourseProject.Camellia camellia = new CryptographyCourseProject.Camellia(key);
-
-            ulong[] message = new ulong[]
-            {
-                 0x0123456789abcdef, 0xfedcba9876543210
-            };
-
-
-
-
-            ulong[] encrypted = camellia.Encrypt(message, key);
-            ulong[] actual = camellia.Decrypt(encrypted, key);
+            byte[] encrypted = camellia.Encrypt(message);
+            byte[] actual = camellia.Decrypt(encrypted);
 
             Assert.Equal(message, actual);
         }
+
+       
     }
 }

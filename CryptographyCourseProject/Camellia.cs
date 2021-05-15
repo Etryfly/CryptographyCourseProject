@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CryptographyCourseProject
 {
     public class Camellia
     {
         private ulong[] _kw, _ke, _k;
+        private readonly int keyLength;
 
         private readonly ulong MASK8 = 0xff;
         private readonly ulong MASK32 = 0xffffffff;
         private readonly ulong MASK64 = 0xffffffffffffffff;
+        
 
         private readonly ulong C1 = 0xA09E667F3BCC908B;
         private readonly ulong C2 = 0xB67AE8584CAA73B2;
@@ -53,9 +57,17 @@ namespace CryptographyCourseProject
 
         };
 
-        public Camellia(ulong[] key)
+        public Camellia(byte[] key)
         {
-            GenerateKeys(key);
+            ulong[] _key = new ulong[key.Length / 8];
+            for (int i = 0; i < _key.Length; i++)
+            {
+                _key[i] = BitConverter.ToUInt64(key.Skip(8 * i).Take(8).ToArray());
+            }
+
+            if (_key.Length < 2 || _key.Length > 4) throw new ArgumentException();
+            keyLength = _key.Length;
+            GenerateKeys(_key);
         }
 
         private byte SBOX2(byte x)
@@ -93,7 +105,7 @@ namespace CryptographyCourseProject
             GenerateSubkeys(KA, KB, KL, KR, key.Length, out _kw, out _ke, out _k);
         }
 
-        private ulong[] Rounds(ulong[] message, ulong[] kw, ulong[] ke, ulong[] k, int keyLength)
+        private ulong[] Rounds(ulong[] message, ulong[] kw, ulong[] ke, ulong[] k)
         {
             ulong D1 = message[0];
             ulong D2 = message[1];
@@ -168,27 +180,42 @@ namespace CryptographyCourseProject
             return new ulong[] { D2, D1 };
         }
 
-        public ulong[] Encrypt(ulong[] message, ulong[] key)
+        public byte[] Encrypt(byte[] message)
         {
-            if (message.Length < 2 || key.Length > 4) throw new ArgumentException();
+            if (message.Length != 16) throw new ArgumentException();
+            ulong[] _message = new ulong[2];
+            _message[0] = BitConverter.ToUInt64(message.Take(8).ToArray());
+            _message[1] = BitConverter.ToUInt64(message.Skip(8).Take(8).ToArray());
+          
+           
 
             ulong[] kw = _kw;
             ulong[] ke = _ke;
             ulong[] k = _k;
 
-            return Rounds(message, kw, ke, k, key.Length);
+            List<byte> result = new List<byte>();
+            ulong[] roundsResult = Rounds(_message, kw, ke, k);
+            result.AddRange(BitConverter.GetBytes(roundsResult[0]));
+            result.AddRange(BitConverter.GetBytes(roundsResult[1]));
+
+            return  result.ToArray();
 
         }
 
-        public ulong[] Decrypt(ulong[] message, ulong[] key)
+        public byte[] Decrypt(byte[] message)
         {
-            if (message.Length < 2 || key.Length > 4) throw new ArgumentException();
+            if (message.Length != 16) throw new ArgumentException();
+            ulong[] _message = new ulong[2];
+            _message[0] = BitConverter.ToUInt64(message.Take(8).ToArray());
+            _message[1] = BitConverter.ToUInt64(message.Skip(8).Take(8).ToArray());
+            
+           
 
             ulong[] kw = _kw;
             ulong[] ke = _ke;
             ulong[] k = _k;
 
-            if (key.Length == 2)
+            if (keyLength == 2)
             {
                 Swap(ref kw[0], ref kw[2]);
                 Swap(ref kw[1], ref kw[3]);
@@ -225,7 +252,12 @@ namespace CryptographyCourseProject
                 Swap(ref ke[2], ref ke[3]);
             }
 
-            return Rounds(message, kw, ke, k, key.Length);
+            List<byte> result = new List<byte>();
+            ulong[] roundsResult = Rounds(_message, kw, ke, k);
+            result.AddRange(BitConverter.GetBytes(roundsResult[0]));
+            result.AddRange(BitConverter.GetBytes(roundsResult[1]));
+
+            return result.ToArray();
         }
 
         #region Utils
