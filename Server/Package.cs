@@ -17,6 +17,6 @@ namespace Server
 
     public enum Message
     {
-        KEY, FILE, END
+        KEY, IV, FILE, END
     }
 }

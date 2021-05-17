@@ -4,10 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
+        xmlns:converters="clr-namespace:Client.Converter"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <converters:StringToEnumConverter x:Name="StringToEnum"></converters:StringToEnumConverter>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+           
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -15,7 +22,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBox>Key</TextBox>
-            <TextBlock></TextBlock>
+            <TextBlock Text="{Binding Key}"></TextBlock>
         </StackPanel>
        
 
@@ -23,7 +30,19 @@
             <TextBlock Text="{Binding InputFile}"></TextBlock>
             <Button Command="{Binding Input}">Input File</Button>
         </StackPanel>
-        <StackPanel Grid.Row="2">
+
+       
+
+        <StackPanel Name="ModeStackPanel" Grid.Row="2" >
+            <TextBlock>Mode</TextBlock>
+            <RadioButton GroupName="Mode"  Content="ECB"  IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=ECB}"></RadioButton>
+            <RadioButton GroupName="Mode"  Content="CBC" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=CBC}"></RadioButton>
+            <RadioButton GroupName="Mode"  Content="CFB" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=CFB}"></RadioButton>
+            <RadioButton GroupName="Mode" Content="OFB" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=OFB}"></RadioButton>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="4">
             <Button Command="{Binding Encrypt}">Encrypt and send</Button>
         </StackPanel>
         

@@ -37,7 +37,7 @@ namespace Ciphers
 
         }
 
-        public static void Encrypt(string inputFile, string outputFile,  string Key, MODE mode, byte[] IV = null)
+        public static void Encrypt(string inputFile, string outputFile,  byte[] Key, MODE mode, byte[] IV = null)
         {
             if (Key.Length != 16 && Key.Length != 24 && Key.Length != 32) throw new ArgumentException();
             switch (mode)
@@ -68,9 +68,10 @@ namespace Ciphers
             }
         }
 
-        public static void Decrypt(string inputFile, string outputFile,  string Key, MODE mode, byte[] IV = null)
+        public static void Decrypt(string inputFile, string outputFile, byte[] Key, MODE mode, byte[] IV = null)
         {
             if (Key.Length != 16 && Key.Length != 24 && Key.Length != 32) throw new ArgumentException();
+            
             switch (mode)
             {
                 case MODE.ECB:
@@ -98,10 +99,9 @@ namespace Ciphers
                     break;
             }
         }
-        public static void EncryptECB(string inputFile, string outputFile,  string Key)
+        public static void EncryptECB(string inputFile, string outputFile,  byte[] Key)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
@@ -110,8 +110,7 @@ namespace Ciphers
 
                 return camellia.Encrypt(block);
             }).ToList();
-            //string tmp = Path.GetTempFileName();
-
+            
             using (var outputStream = File.OpenWrite(outputFile))
             {
                 foreach (var line in result)
@@ -123,10 +122,9 @@ namespace Ciphers
 
         }
 
-        public static void DecryptECB(string inputFile, string outputFile, string Key)
+        public static void DecryptECB(string inputFile, string outputFile, byte[] Key)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
@@ -177,10 +175,9 @@ namespace Ciphers
 
         }
 
-        public static void EncryptCBC(string inputFile, string outputFile, string Key, byte[] IV)
+        public static void EncryptCBC(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             using (var InputStream = File.OpenRead(inputFile))
             using (var OutputStream = File.OpenWrite(outputFile))
@@ -203,10 +200,9 @@ namespace Ciphers
             }
         }
 
-        public static void DecryptCBC(string inputFile, string outputFile, string Key, byte[] IV)
+        public static void DecryptCBC(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             using (var InputStream = File.OpenRead(inputFile))
             using (var OutputStream = File.OpenWrite(outputFile))
@@ -238,11 +234,10 @@ namespace Ciphers
             }
         }
 
-        public static void EncryptCFB(string inputFile, string outputFile, string Key, byte[] IV)
+        public static void EncryptCFB(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
 
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile); 
             
             using (var InputStream = File.OpenRead(inputFile))
@@ -266,10 +261,9 @@ namespace Ciphers
             }
         }
 
-        public static void DecryptCFB(string inputFile, string outputFile,  string Key, byte[] IV)
+        public static void DecryptCFB(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             using (var InputStream = File.OpenRead(inputFile))
             using (var OutputStream = File.OpenWrite(outputFile))
@@ -302,10 +296,9 @@ namespace Ciphers
         }
 
 
-        public static void EncryptOFB(string inputFile, string outputFile,  string Key, byte[] IV)
+        public static void EncryptOFB(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             using (var InputStream = File.OpenRead(inputFile))
             using (var OutputStream = File.OpenWrite(outputFile))
@@ -327,10 +320,10 @@ namespace Ciphers
             }
         }
 
-        public static void DecryptOFB(string inputFile, string outputFile, string Key, byte[] IV)
+        public static void DecryptOFB(string inputFile, string outputFile, byte[] Key, byte[] IV)
         {
-            byte[] keyInBytes = Encoding.ASCII.GetBytes(Key);
-            Camellia camellia = new Camellia(keyInBytes);
+            
+            Camellia camellia = new Camellia(Key);
             File.Delete(outputFile);
             using (var InputStream = File.OpenRead(inputFile))
             using (var OutputStream = File.OpenWrite(outputFile))

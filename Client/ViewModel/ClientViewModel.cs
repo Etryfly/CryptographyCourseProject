@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -32,6 +33,41 @@ namespace Client
         }
 
 
+        #region Mode
+        private Ciphers.FileEncrypter.MODE _mode = Ciphers.FileEncrypter.MODE.ECB;
+        public Ciphers.FileEncrypter.MODE SelectedMode
+        {
+            get
+            {
+
+                return _mode;
+            }
+
+            set
+            {
+                _mode = value;
+                OnPropertyChanged(nameof(SelectedMode));
+            }
+        }
+
+        #endregion
+
+
+        private string _key;
+        public string Key
+        {
+            get
+            {
+                return _key;
+            }
+
+            set
+            {
+                _key = value;
+                OnPropertiesChanged("Key");
+            }
+        }
+
         #region Encrypt
         private RelayCommand _encryptCommand;
         public ICommand Encrypt
@@ -52,106 +88,26 @@ namespace Client
             TcpClient client = new TcpClient("localhost", 8888);
             using (NetworkStream stream = client.GetStream())
             {
-               
-                    List<byte> result = new List<byte>();
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    while (true)
-                    {
 
-                        Package package = (Package)formatter.Deserialize(stream);
-                    if (package.message == Message.END) break;
-                    result.AddRange(package.data);
-                   
-                }
 
-                    BigInteger e = new BigInteger(result.ToArray());
-                    MessageBox.Show(e.ToString());
-                
+                byte[] eBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
+                BigInteger e = new BigInteger(eBytes);
+
+                byte[] nBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
+                BigInteger n = new BigInteger(nBytes);
+
+                BigInteger m = new BigInteger(Encoding.ASCII.GetBytes(Key));
+
+                BigInteger c = CryptographyCourseProject.RSA.Encrypt(m, e, n);
+
+                //send c to server
+
+                //encrypt file with Key
+
+                //send file to server
+
             }
-            /* try
-             {
-                 IsActionPerforming = true;
-
-
-
-                 string tmpPath = InputFile;
-
-                 foreach (CryptoItemModel item in Algorithms)
-                 {
-
-
-
-                     try
-                     {
-                         IEnumerable<byte[]> result = Encryption(tmpPath, item.Key, item.Algorithm, cancelTokenSource);
-                         if (tmpPath == InputFile)
-                         {
-
-                             tmpPath = Path.GetTempFileName();
-                         }
-                         try
-                         {
-                             using (var outputStream = File.OpenWrite(tmpPath))
-                             {
-                                 Task thread = new Task(new Action(() =>
-                                 {
-                                     foreach (var line in result)
-                                     {
-                                         outputStream.Write(line);
-                                     }
-                                 }));
-                                 thread.Start();
-                                 await thread;
-
-                             }
-                         }
-                         catch (AggregateException agex)
-                         {
-                             agex.Handle(ex =>
-                             {
-                                 MessageBox.Show(ex.Message);
-                                 return true;
-                             });
-                         }
-                     }
-                     catch (KeyLengthException e)
-                     {
-                         MessageBox.Show("Key length error, expected " + e.ExpectedLength);
-                         return;
-                     }
-
-
-
-                 }
-
-                 using (var input = File.OpenRead(tmpPath))
-                 {
-                     using (var output = File.OpenWrite(OutputFile))
-                     {
-                         byte[] buffer = new byte[1024];
-                         int count = 0;
-                         while ((count = input.Read(buffer)) != 0)
-                         {
-
-                             output.Write(buffer, 0, count);
-
-                         }
-                     }
-                 }
-
-                 File.Delete(tmpPath);
-
-
-
-
-                 MessageBox.Show("Encrypted");
-             }
-             catch (OperationCanceledException e)
-             {
-                 MessageBox.Show("Canceled");
-             }
-             IsActionPerforming = false;
-             */
+           
         }
 
 
@@ -163,18 +119,7 @@ namespace Client
             return false;
         }
 
-        public void Encryption(string fileName, string password)
-        {
-
-
-
-
-
-
-
-            //return encrypted;
-
-        }
+       
 
         #endregion
 
@@ -224,23 +169,12 @@ namespace Client
 
         #endregion
 
+      
 
 
 
-        private string _key;
-        public string Key
-        {
-            get
-            {
-                return _key;
-            }
 
-            set
-            {
-                _key = value;
-                OnPropertiesChanged("Key");
-            }
-        }
+      
 
 
 
