@@ -9,6 +9,8 @@ namespace CryptographyCourseProject
         private ulong[] _kw, _ke, _k;
         private readonly int keyLength;
 
+        #region Constants
+
         private readonly ulong MASK8 = 0xff;
         private readonly ulong MASK32 = 0xffffffff;
 
@@ -20,6 +22,23 @@ namespace CryptographyCourseProject
         private readonly ulong C4 = 0x54FF53A5F1D36F1C;
         private readonly ulong C5 = 0x10E527FADE682D1D;
         private readonly ulong C6 = 0xB05688C2B3E6C1FD;
+
+        #endregion
+
+        public Camellia(byte[] key)
+        {
+            ulong[] _key = new ulong[key.Length / 8];
+            for (int i = 0; i < _key.Length; i++)
+            {
+                _key[i] = BitConverter.ToUInt64(key.Skip(8 * i).Take(8).ToArray());
+            }
+
+            if (_key.Length < 2 || _key.Length > 4) throw new ArgumentException();
+            keyLength = _key.Length;
+            GenerateKeys(_key);
+        }
+
+        #region SBOXES
 
         private byte[] SBOX1 = {
 
@@ -57,19 +76,6 @@ namespace CryptographyCourseProject
 
         };
 
-        public Camellia(byte[] key)
-        {
-            ulong[] _key = new ulong[key.Length / 8];
-            for (int i = 0; i < _key.Length; i++)
-            {
-                _key[i] = BitConverter.ToUInt64(key.Skip(8 * i).Take(8).ToArray());
-            }
-
-            if (_key.Length < 2 || _key.Length > 4) throw new ArgumentException();
-            keyLength = _key.Length;
-            GenerateKeys(_key);
-        }
-
         private byte SBOX2(byte x)
         {
             return CircularShiftLeft(SBOX1[x], 1);
@@ -84,6 +90,8 @@ namespace CryptographyCourseProject
         {
             return SBOX1[CircularShiftLeft(x, 1) & MASK8];
         }
+
+        #endregion
 
         private void GenerateKeys(ulong[] key)
         {

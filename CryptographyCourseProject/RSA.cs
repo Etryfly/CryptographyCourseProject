@@ -19,8 +19,6 @@ namespace CryptographyCourseProject
                 BigInteger q = new BigInteger(bytes);
 
                 if (MillerRabin(q, 7)) return q;
-
-
             }
         }
 
@@ -39,7 +37,6 @@ namespace CryptographyCourseProject
                 d /= 2;
                 s += 1;
             }
-
 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] bytes = new byte[source.ToByteArray().LongLength];
