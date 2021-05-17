@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptographyCourseProject\CryptographyCourseProject.csproj" />
+    <ProjectReference Include="..\CryptographyCourseProject\Ciphers.csproj" />
   </ItemGroup>
 
 </Project>

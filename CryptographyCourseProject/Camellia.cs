@@ -11,7 +11,7 @@ namespace CryptographyCourseProject
 
         private readonly ulong MASK8 = 0xff;
         private readonly ulong MASK32 = 0xffffffff;
-        private readonly ulong MASK64 = 0xffffffffffffffff;
+        
         
 
         private readonly ulong C1 = 0xA09E667F3BCC908B;
@@ -268,10 +268,7 @@ namespace CryptographyCourseProject
             left = right;
             right = tmp;
         }
-        private ulong CircularShiftLeft(ulong value, int count)
-        {
-            return value << count | value >> (64 - count);
-        }
+    
 
         private byte CircularShiftLeft(byte value, int count)
         {
@@ -481,5 +478,9 @@ namespace CryptographyCourseProject
             return ((((ulong)y1) << 32) | ((ulong)y2));
 
         }
+
+
+
+        public static void Main(string[] args) { }
     }
 }
