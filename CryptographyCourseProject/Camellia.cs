@@ -11,8 +11,8 @@ namespace CryptographyCourseProject
 
         private readonly ulong MASK8 = 0xff;
         private readonly ulong MASK32 = 0xffffffff;
-        
-        
+
+
 
         private readonly ulong C1 = 0xA09E667F3BCC908B;
         private readonly ulong C2 = 0xB67AE8584CAA73B2;
@@ -186,8 +186,8 @@ namespace CryptographyCourseProject
             ulong[] _message = new ulong[2];
             _message[0] = BitConverter.ToUInt64(message.Take(8).ToArray());
             _message[1] = BitConverter.ToUInt64(message.Skip(8).Take(8).ToArray());
-          
-           
+
+
 
             ulong[] kw = _kw;
             ulong[] ke = _ke;
@@ -198,7 +198,7 @@ namespace CryptographyCourseProject
             result.AddRange(BitConverter.GetBytes(roundsResult[0]));
             result.AddRange(BitConverter.GetBytes(roundsResult[1]));
 
-            return  result.ToArray();
+            return result.ToArray();
 
         }
 
@@ -208,8 +208,8 @@ namespace CryptographyCourseProject
             ulong[] _message = new ulong[2];
             _message[0] = BitConverter.ToUInt64(message.Take(8).ToArray());
             _message[1] = BitConverter.ToUInt64(message.Skip(8).Take(8).ToArray());
-            
-           
+
+
 
             ulong[] kw = _kw;
             ulong[] ke = _ke;
@@ -268,7 +268,7 @@ namespace CryptographyCourseProject
             left = right;
             right = tmp;
         }
-    
+
 
         private byte CircularShiftLeft(byte value, int count)
         {
@@ -286,9 +286,10 @@ namespace CryptographyCourseProject
                 result[1] |= value[1] << count;
                 result[0] = value[0] << count;
                 result[0] |= value[1] >> (64 - count);
-            } else
+            }
+            else
             {
-                result[1] = value[0] << ( count - 64);
+                result[1] = value[0] << (count - 64);
                 result[1] |= value[1] >> (128 - count);
                 result[0] = value[0] >> (128 - count);
                 result[0] |= value[1] << (count - 64);
@@ -429,14 +430,14 @@ namespace CryptographyCourseProject
         private ulong F(ulong F_IN, ulong KE)
         {
             ulong x = F_IN ^ KE;
-            byte t1 =(byte) ( (x >> 56) & MASK8);
-            byte t2 =(byte)((x >> 48) & MASK8);
-            byte t3 =(byte)((x >> 40) & MASK8);
-            byte t4 =(byte)((x >> 32) & MASK8);
-            byte t5 =(byte)((x >> 24) & MASK8);
-            byte t6 =(byte)((x >> 16) & MASK8);
-            byte t7 =(byte)((x >> 8) & MASK8);
-            byte t8 =(byte)(x & MASK8);
+            byte t1 = (byte)((x >> 56) & MASK8);
+            byte t2 = (byte)((x >> 48) & MASK8);
+            byte t3 = (byte)((x >> 40) & MASK8);
+            byte t4 = (byte)((x >> 32) & MASK8);
+            byte t5 = (byte)((x >> 24) & MASK8);
+            byte t6 = (byte)((x >> 16) & MASK8);
+            byte t7 = (byte)((x >> 8) & MASK8);
+            byte t8 = (byte)(x & MASK8);
             t1 = SBOX1[t1];
             t2 = SBOX2(t2);
             t3 = SBOX3(t3);
@@ -445,14 +446,14 @@ namespace CryptographyCourseProject
             t6 = SBOX3(t6);
             t7 = SBOX4(t7);
             t8 = SBOX1[t8];
-            ulong y1 =(byte)(t1 ^ t3 ^ t4 ^ t6 ^ t7 ^ t8);
-            ulong y2 =(byte)(t1 ^ t2 ^ t4 ^ t5 ^ t7 ^ t8);
-            ulong y3 =(byte)(t1 ^ t2 ^ t3 ^ t5 ^ t6 ^ t8);
-            ulong y4 =(byte)(t2 ^ t3 ^ t4 ^ t5 ^ t6 ^ t7);
-            ulong y5 =(byte)(t1 ^ t2 ^ t6 ^ t7 ^ t8);
-            ulong y6 =(byte)(t2 ^ t3 ^ t5 ^ t7 ^ t8);
-            ulong y7 =(byte)(t3 ^ t4 ^ t5 ^ t6 ^ t8);
-            ulong y8 =(byte)(t1 ^ t4 ^ t5 ^ t6 ^ t7);
+            ulong y1 = (byte)(t1 ^ t3 ^ t4 ^ t6 ^ t7 ^ t8);
+            ulong y2 = (byte)(t1 ^ t2 ^ t4 ^ t5 ^ t7 ^ t8);
+            ulong y3 = (byte)(t1 ^ t2 ^ t3 ^ t5 ^ t6 ^ t8);
+            ulong y4 = (byte)(t2 ^ t3 ^ t4 ^ t5 ^ t6 ^ t7);
+            ulong y5 = (byte)(t1 ^ t2 ^ t6 ^ t7 ^ t8);
+            ulong y6 = (byte)(t2 ^ t3 ^ t5 ^ t7 ^ t8);
+            ulong y7 = (byte)(t3 ^ t4 ^ t5 ^ t6 ^ t8);
+            ulong y8 = (byte)(t1 ^ t4 ^ t5 ^ t6 ^ t7);
             return ((y1 << 56) | (y2 << 48) | (y3 << 40) | (y4 << 32) | (y5 << 24) | (y6 << 16) | (y7 << 8) | y8);
         }
 

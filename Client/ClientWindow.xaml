@@ -24,7 +24,7 @@
             <Button Command="{Binding Input}">Input File</Button>
         </StackPanel>
         <StackPanel Grid.Row="2">
-            <Button>Encrypt and send</Button>
+            <Button Command="{Binding Encrypt}">Encrypt and send</Button>
         </StackPanel>
         
     </Grid>

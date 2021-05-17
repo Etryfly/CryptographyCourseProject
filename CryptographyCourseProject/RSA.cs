@@ -6,7 +6,7 @@ namespace CryptographyCourseProject
 {
     public static class RSA
     {
-       
+
 
         public static BigInteger GetPrime(int sizeInBytes)
         {
@@ -123,7 +123,7 @@ namespace CryptographyCourseProject
             return gcd;
         }
 
-       
+
 
         public static void GenerateKeys(int size, out BigInteger e, out BigInteger n, out BigInteger d)
         {
@@ -134,7 +134,7 @@ namespace CryptographyCourseProject
 
             BigInteger eiler = (p - 1) * (q - 1);
 
-            Console.WriteLine(n);
+          
 
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] bytes = new byte[size / 32];
@@ -150,7 +150,7 @@ namespace CryptographyCourseProject
             e = Inverse(d, eiler);
         }
 
-        
+
 
         public static BigInteger Encrypt(BigInteger m, BigInteger e, BigInteger n)
         {

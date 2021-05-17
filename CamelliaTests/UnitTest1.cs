@@ -14,7 +14,7 @@ namespace CamelliaTests
 
             byte[] message = ASCIIEncoding.ASCII.GetBytes("jghfuerygiop1234");
 
-           
+
 
             byte[] encrypted = camellia.Encrypt(message);
             byte[] actual = camellia.Decrypt(encrypted);
@@ -22,6 +22,6 @@ namespace CamelliaTests
             Assert.Equal(message, actual);
         }
 
-       
+
     }
 }
