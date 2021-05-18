@@ -219,9 +219,13 @@ namespace CryptographyCourseProject
 
 
 
-            ulong[] kw = _kw;
-            ulong[] ke = _ke;
-            ulong[] k = _k;
+            ulong[] kw = new ulong[_kw.Length];
+            _kw.CopyTo(kw,0);
+            ulong[] ke = new ulong[_ke.Length];
+            _ke.CopyTo(ke, 0);
+
+            ulong[] k = new ulong[_k.Length];
+            _k.CopyTo(k, 0);
 
             if (keyLength == 2)
             {

@@ -30,7 +30,9 @@ namespace Ciphers
                 while ((count = stream.Read(batch)) != 0)
                 {
                     result.Add(batch);
-                    batch = new byte[batchSizeInBytes];
+                    string txt = Encoding.ASCII.GetString(batch);
+                   batch = new byte[batchSizeInBytes];
+                   
                 }
             }
             return result;
@@ -105,7 +107,7 @@ namespace Ciphers
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
-            List<byte[]> result = chunks.AsParallel().AsOrdered().Select((block) =>
+            List<byte[]> result = chunks.Select((block) =>
             {
 
                 return camellia.Encrypt(block);
@@ -128,11 +130,12 @@ namespace Ciphers
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
-            List<byte[]> result = chunks.AsParallel().AsOrdered().Select((block) =>
+            List<byte[]> result = chunks.Select((block) =>
             {
 
                 return camellia.Decrypt(block);
             }).ToList();
+
             string tmp = Path.GetTempFileName();
 
             using (var outputStream = File.OpenWrite(tmp))
@@ -147,7 +150,7 @@ namespace Ciphers
             {
                 using (var output = File.OpenWrite(outputFile))
                 {
-                    byte[] buffer = new byte[Nb ];
+                    byte[] buffer = new byte[1024];
                     int count = 0;
 
                     while ((count = input.Read(buffer)) != 0)
@@ -160,7 +163,7 @@ namespace Ciphers
                                 i--;
                             }
                             output.Write(buffer, 0, i + 1);
-                            buffer = new byte[1024];
+                           // buffer = new byte[1024];
                         }
                         else
                         {

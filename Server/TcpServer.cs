@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace Server
 {
@@ -31,7 +32,25 @@ namespace Server
                         CryptographyCourseProject.RSA.GenerateKeys(1024, out e, out n, out d);
                         NetworkStreamUtils.WriteDataIntoStream(Message.KEY, e.ToByteArray(), stream);
                         NetworkStreamUtils.WriteDataIntoStream(Message.KEY, n.ToByteArray(), stream);
-                           
+
+
+
+                        BigInteger c = new BigInteger(NetworkStreamUtils.ReadBytesFromStream(stream));
+                        BigInteger symKey = CryptographyCourseProject.RSA.Decrypt(c, d, n);
+
+                        byte[] IV = NetworkStreamUtils.ReadBytesFromStream(stream);
+
+                        string workingDirectory = Environment.CurrentDirectory;
+                        string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+                        string fileName = Encoding.ASCII.GetString( NetworkStreamUtils.ReadBytesFromStream(stream));
+
+                        string Mode = Encoding.ASCII.GetString(NetworkStreamUtils.ReadBytesFromStream(stream));
+                        string outputFilePath = projectDirectory + "/Files/" + fileName ;
+                        NetworkStreamUtils.ReadFileFromStream(outputFilePath + "e", stream);
+
+                        Ciphers.FileEncrypter.Decrypt(outputFilePath + "e", outputFilePath, symKey.ToByteArray(),
+                            (Ciphers.FileEncrypter.MODE)Enum.Parse(typeof(Ciphers.FileEncrypter.MODE), Mode), IV);
                     }
                 }
             }

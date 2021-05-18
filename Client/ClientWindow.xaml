@@ -9,7 +9,7 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
-        <converters:StringToEnumConverter x:Name="StringToEnum"></converters:StringToEnumConverter>
+        <converters:StringToEnumConverter x:Key="StringToEnum"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -21,8 +21,8 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <TextBox>Key</TextBox>
-            <TextBlock Text="{Binding Key}"></TextBlock>
+            <TextBlock>Key</TextBlock>
+            <TextBox Text="{Binding Key}" ></TextBox>
         </StackPanel>
        
 
@@ -35,10 +35,10 @@
 
         <StackPanel Name="ModeStackPanel" Grid.Row="2" >
             <TextBlock>Mode</TextBlock>
-            <RadioButton GroupName="Mode"  Content="ECB"  IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=ECB}"></RadioButton>
-            <RadioButton GroupName="Mode"  Content="CBC" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=CBC}"></RadioButton>
-            <RadioButton GroupName="Mode"  Content="CFB" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=CFB}"></RadioButton>
-            <RadioButton GroupName="Mode" Content="OFB" IsChecked="{Binding SelectedMode, Converter={StaticResource stringToEnum}, ConverterParameter=OFB}"></RadioButton>
+            <RadioButton GroupName="Mode"  Content="ECB"  IsChecked="{Binding SelectedMode, Converter={StaticResource StringToEnum}, ConverterParameter=ECB}"></RadioButton>
+            <RadioButton GroupName="Mode"  Content="CBC" IsChecked="{Binding SelectedMode, Converter={StaticResource StringToEnum}, ConverterParameter=CBC}"></RadioButton>
+            <RadioButton GroupName="Mode"  Content="CFB" IsChecked="{Binding SelectedMode, Converter={StaticResource StringToEnum}, ConverterParameter=CFB}"></RadioButton>
+            <RadioButton GroupName="Mode" Content="OFB" IsChecked="{Binding SelectedMode, Converter={StaticResource StringToEnum}, ConverterParameter=OFB}"></RadioButton>
 
         </StackPanel>
 

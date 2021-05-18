@@ -100,11 +100,21 @@ namespace Client
 
                 BigInteger c = CryptographyCourseProject.RSA.Encrypt(m, e, n);
 
-                //send c to server
+                byte[] IV = new byte[16];
+                Random random = new Random();
+                random.NextBytes(IV);
+                NetworkStreamUtils.WriteDataIntoStream(Message.KEY, c.ToByteArray(), stream);
+                NetworkStreamUtils.WriteDataIntoStream(Message.IV, IV, stream);
+                string output = Path.GetTempFileName();
+                Ciphers.FileEncrypter.Encrypt(InputFile, output, Encoding.ASCII.GetBytes(Key), SelectedMode, IV);
 
-                //encrypt file with Key
+                NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(Path.GetFileName(InputFile)), stream);
+                NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(SelectedMode.ToString()), stream);
 
-                //send file to server
+
+
+                NetworkStreamUtils.WriteFileIntoStream(output, stream);
+               
 
             }
            

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -41,6 +42,54 @@ namespace Server
 
             formatter.Serialize(stream, end);
             stream.Flush();
+        }
+
+        public static void WriteFileIntoStream(string fileName, NetworkStream stream)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (var input = File.OpenRead(fileName)) {
+                int count = 0;
+                int size = 0;
+                byte[] block = new byte[Package.PackageDataLength];
+                while ((count = input.Read(block)) != 0)
+                {
+                    size += count;
+                    Package package = new Package();
+                    package.message = Message.FILE;
+                    package.data = block;
+
+                    formatter.Serialize(stream, package);
+
+                    stream.Flush();
+                }
+            
+            Package end = new Package();
+            end.message = Message.END;
+
+
+            formatter.Serialize(stream, end);
+            stream.Flush();
+            }
+        }
+
+        public static void ReadFileFromStream(string outputFileName, NetworkStream stream)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (var output = File.OpenWrite(outputFileName))
+            {
+                
+                while (true)
+                {
+
+                    Package package = (Package)formatter.Deserialize(stream);
+
+                    if (package.message == Message.END) break;
+                   
+                    output.Write(package.data);
+
+                }
+            }
+            
         }
 
         private static List<byte[]> SplitByteArray(byte[] array, int size)
