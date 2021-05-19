@@ -53,6 +53,7 @@ namespace Server
                             (Ciphers.FileEncrypter.MODE)Enum.Parse(typeof(Ciphers.FileEncrypter.MODE), Mode), IV);
 
                         Console.WriteLine(outputFilePath + "Decrypted");
+                        NetworkStreamUtils.SendDecryptedPackage(stream);
                     }
                 }
             }

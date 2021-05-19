@@ -114,14 +114,20 @@ namespace Client
                     NetworkStreamUtils.WriteDataIntoStream(Message.IV, IV, stream);
                     string output = Path.GetTempFileName();
                     Ciphers.FileEncrypter.Encrypt(InputFile, output, Encoding.ASCII.GetBytes(Key), SelectedMode, IV);
-
+                    MessageBox.Show("Encrypted");
                     NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(Path.GetFileName(InputFile)), stream);
                     NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(SelectedMode.ToString()), stream);
 
-
+                   
 
                     NetworkStreamUtils.WriteFileIntoStream(output, stream);
-
+                    if (NetworkStreamUtils.RecieveDecryptedPackage(stream))
+                    {
+                        MessageBox.Show("Decrypted");
+                    } else
+                    {
+                        MessageBox.Show("Error");
+                    }
                    
                 }
             }));

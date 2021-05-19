@@ -92,6 +92,25 @@ namespace Server
             
         }
 
+        public static void SendDecryptedPackage(NetworkStream stream)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            Package package = new Package();
+            package.message = Message.DECRYPTED;
+            formatter.Serialize(stream, package);
+
+            stream.Flush();
+        }
+
+        public static bool RecieveDecryptedPackage(NetworkStream stream)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+          
+            Package package = (Package)formatter.Deserialize(stream);
+            if (package.message == Message.DECRYPTED) return true;
+            return false;
+        }
+
         private static List<byte[]> SplitByteArray(byte[] array, int size)
         {
             List<byte[]> result = new List<byte[]>();
