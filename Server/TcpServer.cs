@@ -43,14 +43,16 @@ namespace Server
                         string workingDirectory = Environment.CurrentDirectory;
                         string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
 
-                        string fileName = Encoding.ASCII.GetString( NetworkStreamUtils.ReadBytesFromStream(stream));
+                        string fileName = Encoding.ASCII.GetString(NetworkStreamUtils.ReadBytesFromStream(stream));
 
                         string Mode = Encoding.ASCII.GetString(NetworkStreamUtils.ReadBytesFromStream(stream));
-                        string outputFilePath = projectDirectory + "/Files/" + fileName ;
+                        string outputFilePath = projectDirectory + "/Files/" + fileName;
                         NetworkStreamUtils.ReadFileFromStream(outputFilePath + "e", stream);
 
                         Ciphers.FileEncrypter.Decrypt(outputFilePath + "e", outputFilePath, symKey.ToByteArray(),
                             (Ciphers.FileEncrypter.MODE)Enum.Parse(typeof(Ciphers.FileEncrypter.MODE), Mode), IV);
+
+                        Console.WriteLine(outputFilePath + "Decrypted");
                     }
                 }
             }

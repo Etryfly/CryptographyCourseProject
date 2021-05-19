@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Client"
         xmlns:converters="clr-namespace:Client.Converter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800">
 
     <Window.Resources>
         <converters:StringToEnumConverter x:Key="StringToEnum"/>
@@ -15,6 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
            
+            <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -45,6 +46,8 @@
         <StackPanel Grid.Row="4">
             <Button Command="{Binding Encrypt}">Encrypt and send</Button>
         </StackPanel>
+
+        <ProgressBar Grid.Row="5" IsIndeterminate="{Binding IsActionPerforming}" ></ProgressBar>
         
     </Grid>
 </Window>

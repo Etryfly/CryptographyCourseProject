@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -32,6 +34,8 @@ namespace Client
             }
         }
 
+
+       
 
         #region Mode
         private Ciphers.FileEncrypter.MODE _mode = Ciphers.FileEncrypter.MODE.ECB;
@@ -84,46 +88,53 @@ namespace Client
 
         public async void ExecuteEncryptCommand(object parameter)
         {
-
-            TcpClient client = new TcpClient("localhost", 8888);
-            using (NetworkStream stream = client.GetStream())
+            IsActionPerforming = true;
+            Task task = new Task(new Action(() =>
             {
+                
+                TcpClient client = new TcpClient("localhost", 8888);
+                using (NetworkStream stream = client.GetStream())
+                {
 
 
-                byte[] eBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
-                BigInteger e = new BigInteger(eBytes);
+                    byte[] eBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
+                    BigInteger e = new BigInteger(eBytes);
 
-                byte[] nBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
-                BigInteger n = new BigInteger(nBytes);
+                    byte[] nBytes = NetworkStreamUtils.ReadBytesFromStream(stream);
+                    BigInteger n = new BigInteger(nBytes);
 
-                BigInteger m = new BigInteger(Encoding.ASCII.GetBytes(Key));
+                    BigInteger m = new BigInteger(Encoding.ASCII.GetBytes(Key));
 
-                BigInteger c = CryptographyCourseProject.RSA.Encrypt(m, e, n);
+                    BigInteger c = CryptographyCourseProject.RSA.Encrypt(m, e, n);
 
-                byte[] IV = new byte[16];
-                Random random = new Random();
-                random.NextBytes(IV);
-                NetworkStreamUtils.WriteDataIntoStream(Message.KEY, c.ToByteArray(), stream);
-                NetworkStreamUtils.WriteDataIntoStream(Message.IV, IV, stream);
-                string output = Path.GetTempFileName();
-                Ciphers.FileEncrypter.Encrypt(InputFile, output, Encoding.ASCII.GetBytes(Key), SelectedMode, IV);
+                    byte[] IV = new byte[16];
+                    Random random = new Random();
+                    random.NextBytes(IV);
+                    NetworkStreamUtils.WriteDataIntoStream(Message.KEY, c.ToByteArray(), stream);
+                    NetworkStreamUtils.WriteDataIntoStream(Message.IV, IV, stream);
+                    string output = Path.GetTempFileName();
+                    Ciphers.FileEncrypter.Encrypt(InputFile, output, Encoding.ASCII.GetBytes(Key), SelectedMode, IV);
 
-                NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(Path.GetFileName(InputFile)), stream);
-                NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(SelectedMode.ToString()), stream);
+                    NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(Path.GetFileName(InputFile)), stream);
+                    NetworkStreamUtils.WriteDataIntoStream(Message.FILE, Encoding.ASCII.GetBytes(SelectedMode.ToString()), stream);
 
 
 
-                NetworkStreamUtils.WriteFileIntoStream(output, stream);
-               
+                    NetworkStreamUtils.WriteFileIntoStream(output, stream);
 
-            }
-           
+                   
+                }
+            }));
+             task.Start();
+            await task;
+
+            IsActionPerforming = false;
         }
 
 
         public bool CanExecutEncryptCommand(object parameter)
         {
-            return true;
+            
             if (IsActionPerforming) return false;
             if (!String.IsNullOrEmpty(InputFile)) return true;
             return false;

@@ -107,7 +107,7 @@ namespace Ciphers
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
-            List<byte[]> result = chunks.Select((block) =>
+            List<byte[]> result = chunks.AsParallel().AsOrdered().Select((block) =>
             {
 
                 return camellia.Encrypt(block);
@@ -130,7 +130,7 @@ namespace Ciphers
             File.Delete(outputFile);
             List<byte[]> chunks = SplitFile(inputFile, Nb).ToList();
 
-            List<byte[]> result = chunks.Select((block) =>
+            List<byte[]> result = chunks.AsParallel().AsOrdered().Select((block) =>
             {
 
                 return camellia.Decrypt(block);
