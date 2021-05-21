@@ -142,6 +142,7 @@ namespace Client
         {
             
             if (IsActionPerforming) return false;
+            if (Key != null && Key.Length != 16 && Key.Length != 24 && Key.Length != 32) return false;
             if (!String.IsNullOrEmpty(InputFile)) return true;
             return false;
         }
